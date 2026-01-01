@@ -59,20 +59,26 @@ resource "google_compute_instance" "first-instance" {
         #Place public key to VMs
         metadata = {
             #username:public-key
-            ssh-keys = "${var.VM-user}:${tls_private_key.my-ssh-keys.public_key_openssh}"
+            ssh-keys = "${var.VM_user}:${tls_private_key.my-ssh-keys.public_key_openssh}"
 
         }
         # connection block  to connect  to the instance
         connection {
             host = self.network_interface[0].access_config[0].nat_ip
             type = "ssh"
-            user =  var.VM-user
+            user =  var.VM_user
             private_key = tls_private_key.my-ssh-keys.private_key_pem
         }
         # Provisiner block to copy file from local to remote machine
         provisioner "file" {
             source = each.key == "ansible" ? "ansible.sh" : "empty.sh"
-            destination = each.key == "ansible" ? "/home/${var.VM-user}/ansible.sh" : "/home/${var.VM-user}/empty.sh"
+            destination = each.key == "ansible" ? "/home/${var.VM_user}/ansible.sh" : "/home/${var.VM_user}/empty.sh"
+        }
+        #provisioner block to execte the script in remote
+        provisioner "remote-exec" {
+            inline = [
+                 each.key == "ansible" ? "chmod +x /home/${var.VM_user}/ansible.sh && /home/${var.VM_user}/ansible.sh" : "echo not a ansible machine"
+            ]
         }
     
 }

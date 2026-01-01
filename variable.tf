@@ -22,7 +22,7 @@ variable "instance" {
 
     }))
 }
-variable "VM-user" {
+variable "VM_user" {
     description = " user name of the vm"
     type = string
 }
