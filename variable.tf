@@ -22,13 +22,3 @@ variable "instance" {
 
     }))
 }
-
-variable "VM-user" {
-    description = " user name of the vm"
-    type = string
-}
-
-variable "source_ranges" {
-    description = "enter the range of cidr range"
-    type = list(string)
-}
