@@ -5,6 +5,8 @@
 *.tfstate
 *.tfstate.*
 key.json
+id_rsa
+id_rsa.pub
 
 # Crash log files
 crash.log
