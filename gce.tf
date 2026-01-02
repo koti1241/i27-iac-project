@@ -78,6 +78,11 @@ resource "google_compute_instance" "first-instance" {
         provisioner "remote-exec" {
             inline = each.key == "ansible" ? ["chmod +x /home/${var.VM_user}/ansible.sh","bash /home/${var.VM_user}/ansible.sh"] : ["echo not a ansible machine"]
         }
+        #provisioners-file : copy the private key from local to all vm's 
+        provisioner "file" {
+            source = "${path.module}/id_rsa"
+            destination = "/home/${var.VM_user}/ssh-keys"
+        } 
     
 }
 # data block for image

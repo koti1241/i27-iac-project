@@ -1,0 +1,41 @@
+# this play book install kenkins and pre requisites of java 
+---
+- hosts: jenkins-master #all
+  become: true
+  tasks:
+  - name : install java
+    apt:
+      name: openjdk-21-jre
+      update_cache: yes
+  - name : Add jenkins key
+  #https://pkg.jenkins.io/debian/jenkins.io-2026.key
+    apt_key:
+       url: https://pkg.jenkins.io/debian/jenkins.io-2026.key
+       state: present
+  - name : Add jenkins repo
+    #https://pkg.jenkins.io/debian binary/
+    apt_repository:
+       repo : 'deb https://pkg.jenkins.io/debian binary/
+       state: present
+  - name: install jenkins
+    apt:
+      name: jenkins
+      state: present
+  - name: start service
+    service:
+       name: jenkins
+       state: started
+  - name: enable service
+    service:
+       name: jenkins
+       enabled: yes
+  - name: cat the initialadminpassword of jenkins
+    shell: cat /var/lib/jenkins/secrets/initialAdminPassword
+    # store the initial password in below
+    register: initial_admin_password
+  - name: display the initial admin password
+    debug:
+       var: initial_admin_password.stdout_lines
+
+
+   
