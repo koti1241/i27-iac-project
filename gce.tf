@@ -76,9 +76,7 @@ resource "google_compute_instance" "first-instance" {
         }
         #provisioner block to execte the script in remote
         provisioner "remote-exec" {
-            inline = [
-                 each.key == "ansible" ? "chmod +x /home/${var.VM_user}/ansible.sh && /home/${var.VM_user}/ansible.sh" : "echo not a ansible machine"
-            ]
+            inline = each.key == "ansible" ? ["chmod +x /home/${var.VM_user}/ansible.sh","bash /home/${var.VM_user}/ansible.sh"] : ["echo not a ansible machine"]
         }
     
 }
