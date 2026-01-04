@@ -1,0 +1,55 @@
+#*****Tasks included in this slave machine***********
+# 1. repo update
+# 2. java installation
+# 3. maven installtion
+# Writing the playbook for installing all reuqired pre- requisites and maven
+---
+- hosts: jenkins-slave
+  become: true
+  vars:
+     user_name: Photossankarshna #define user as a variable
+  tasks:
+  - name: update ubuntu repo
+    apt: #apt is used for manage packages
+      update_cache: yes
+      cache_valid_time: 3600 # cache will update again after 3600 seconds
+  - name: install java
+    apt:
+      name: openjdk-21-jre
+      state: present
+  - name: install maven
+    get_url:  # get-url module used for download the urls from internet
+      url: https://dlcdn.apache.org/maven/maven-3/3.8.9/binaries/apache-maven-3.8.9-bin.tar.gz
+      dest: /opt
+  - name: extract the maven packages
+    unarchive:
+      src: /opt/apache-maven-3.8.9-bin.tar.gz
+      dest: /opt
+      remote_src: yes
+  - name: Download openjdk21
+    get_url:
+      url: https://download.java.net/java/GA/jdk21.0.2/f2283984656d49d69e91c558476027ac/13/GPL/openjdk-21.0.2_linux-x64_bin.tar.gz
+      dest: /opt
+  - name: extract the openjdk
+    unarchive:
+      src: /opt/openjdk-21.0.2_linux-x64_bin.tar.gz
+      dest: /opt
+      remote_src: yes
+  - name: remname openjdk-21.0.2 to openjdk-21
+    command: mv /opt/jdk-21.0.2 /opt/jdk-21
+    args: # create dir using arg module with create attribute
+      creates: /opt/jdk-21 
+  - name: create home directory of jenkins /home/user/jenkins
+    file:  #create directories/files from using file module
+      path: /home/{{ user_name }}/jenkins
+      state: directory
+      owner: "{{ user_name }}"
+      group: "{ {user_name }}"
+      recurse: true #Ensure ownership is applied recursively
+  - name: create a file name of koti under /home/user
+    file:  #create directories/files from using file module
+      path: /home/{{ user_name }}/koti
+      state: touch
+
+     
+
